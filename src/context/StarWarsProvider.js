@@ -5,28 +5,29 @@ import StarWarsContext from './StarWarsContext';
 import fetchApi from '../services/api';
 
 export default function StarwarsProvider({ children }) {
+  const [name, setName] = useState('');
+  const [column, setColumn] = useState('');
+  const [comparison, setComparison] = useState('');
+  const [value, setValue] = useState('');
   const [data, setData] = useState([]);
-  const [filter, setFilter] = useState({
+
+  const filter = {
     filters: {
       filterByName: {
-        name: '',
+        name,
       },
       filterByNumericValues: [
         {
-          column: '',
-          comparison: '',
-          value: '',
-        },
-        {
-          column: '',
-          comparison: '',
-          value: '',
+          column,
+          comparison,
+          value,
         },
       ],
     },
-  });
+  };
 
-  const newData = data.filter((element) => element.name.includes(filter.filters.filterByName.name));
+  const newData = data.filter((element) => element.name.toLowerCase()
+    .includes(name.toLowerCase()));
 
   async function setPlanets() {
     try {
@@ -42,7 +43,17 @@ export default function StarwarsProvider({ children }) {
   }, []);
 
   return (
-    <StarWarsContext.Provider value={ { newData, data, filter, setFilter } }>
+    <StarWarsContext.Provider
+      value={ {
+        setName,
+        setColumn,
+        setComparison,
+        setValue,
+        newData,
+        data,
+        filter,
+      } }
+    >
       {children}
     </StarWarsContext.Provider>
   );

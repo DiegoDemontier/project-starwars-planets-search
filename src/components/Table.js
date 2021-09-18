@@ -2,18 +2,10 @@ import React, { useContext } from 'react';
 import StarWarsContext from '../context/StarWarsContext';
 
 function Table() {
-  const { data, filter, newData } = useContext(StarWarsContext);
-  const { filters: { filterByName: { name } } } = filter;
+  const { data, newData } = useContext(StarWarsContext);
 
   let arrayData = data.reduce((__, acc) => acc, []);
   arrayData = Object.keys(arrayData).filter((key) => key !== 'residents');
-
-  /* let newData = []; */
-
-  /* function newObjectData(text) {
-    newData = data.filter((element) => element.name.includes(text));
-    return newData;
-  } */
 
   return (
     <table>

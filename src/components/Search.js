@@ -1,47 +1,65 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import StarwarsContext from '../context/StarWarsContext';
 
 function Search() {
-  const { search, setFilter } = useContext(StarwarsContext);
-  const [name, setName] = useState('');
+  const { setName, setColumn, setComparison, setValue } = useContext(StarwarsContext);
 
-  const newFilter = {
-    filters: {
-      filterByName: {
-        name,
-      },
-      filterByNumericValues: [
-        {
-          column: '',
-          comparison: '',
-          value: '',
-        },
-        {
-          column: '',
-          comparison: '',
-          value: '',
-        },
-      ],
-    },
-  };
-
-  function handleFilter({ target }) {
-    if (target.name === 'name') setName(target.value);
-    setFilter(newFilter);
-  }
-
-  return (
-    <form>
+  function renderFilterByName() {
+    return (
       <label htmlFor="name">
         <input
           data-testid="name-filter"
           name="name"
           id="name"
           type="text"
-          onChange={ handleFilter }
+          onChange={ ({ target }) => setName(target.value) }
         />
       </label>
-    </form>
+    );
+  }
+
+  return (
+    <div>
+      { renderFilterByName() }
+      <form>
+        <label htmlFor="column">
+          <select
+            data-testid="column-filter"
+            name="column"
+            id="column"
+            onChange={ ({ target }) => setColumn(target.value) }
+          >
+            <option value="population">population</option>
+            <option value="orbital_period">orbital_period</option>
+            <option value="diameter">diameter</option>
+            <option value="rotation_period">rotation_period</option>
+            <option value="surface_water">surface_water</option>
+          </select>
+        </label>
+        <label htmlFor="comparison">
+          <select
+            data-testid="comparison-filter"
+            name="comparison"
+            id="comparison"
+            onChange={ ({ target }) => setComparison(target.value) }
+          >
+            <option value="maior que">maior que</option>
+            <option value="menor que">menor que</option>
+            <option value="igual a">igual a</option>
+          </select>
+        </label>
+        <label htmlFor="value">
+          <input
+            data-testid="value-filter"
+            name="value"
+            id="value"
+            type="number"
+            onChange={ ({ target }) => setValue(target.value) }
+          />
+        </label>
+        <button type="button" data-testid="button-filter">Filtrar</button>
+      </form>
+    </div>
   );
 }
 
