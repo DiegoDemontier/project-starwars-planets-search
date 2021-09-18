@@ -2,9 +2,18 @@ import React, { useContext } from 'react';
 import StarWarsContext from '../context/StarWarsContext';
 
 function Table() {
-  const { data } = useContext(StarWarsContext);
+  const { data, filter, newData } = useContext(StarWarsContext);
+  const { filters: { filterByName: { name } } } = filter;
+
   let arrayData = data.reduce((__, acc) => acc, []);
   arrayData = Object.keys(arrayData).filter((key) => key !== 'residents');
+
+  /* let newData = []; */
+
+  /* function newObjectData(text) {
+    newData = data.filter((element) => element.name.includes(text));
+    return newData;
+  } */
 
   return (
     <table>
@@ -16,7 +25,7 @@ function Table() {
         </tr>
       </thead>
       <tbody>
-        {data.map((element) => (
+        {newData.map((element) => (
           <tr key={ element.name }>
             <td>{element.name}</td>
             <td>{element.rotation_period}</td>
