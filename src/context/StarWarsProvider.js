@@ -5,36 +5,43 @@ import StarWarsContext from './StarWarsContext';
 import fetchApi from '../services/api';
 
 export default function StarwarsProvider({ children }) {
-  const [name, setName] = useState('');
-  const [column, setColumn] = useState('');
-  const [comparison, setComparison] = useState('');
-  const [value, setValue] = useState('');
   const [data, setData] = useState([]);
-
-  const filter = {
+  const [filter, setFilter] = useState({
     filters: {
       filterByName: {
-        name,
+        name: '',
       },
-      filterByNumericValues: [
-        {
-          column,
-          comparison,
-          value,
-        },
-      ],
+      filterByNumericValues: [],
     },
-  };
+  });
 
-  const newData = data.filter((element) => element.name.toLowerCase()
-    .includes(name.toLowerCase()));
+  function newFilter() {
+    let newData = [];
+    let values = [];
+
+    if (filter.filters.filterByNumericValues.length > 0) {
+      values = Object.values(filter.filters.filterByNumericValues[0]);
+    }
+
+    if (values[1] === 'maior que') {
+      newData = data.filter((element) => element[values[0]] > Number(values[2]));
+    } else if (values[1] === 'menor que') {
+      newData = data.filter((element) => element[values[0]] < Number(values[2]));
+    } else if (values[1] === 'igual a') {
+      newData = data.filter((element) => element[values[0]] === Number(values[2]));
+    } else {
+      newData = data.filter((element) => element.name.toLowerCase()
+        .includes(filter.filters.filterByName.name.toLowerCase()));
+    }
+    return newData;
+  }
 
   async function setPlanets() {
     try {
       const response = await fetchApi();
       setData(response);
     } catch (error) {
-      setData(error);
+      console.log(error);
     }
   }
 
@@ -45,13 +52,10 @@ export default function StarwarsProvider({ children }) {
   return (
     <StarWarsContext.Provider
       value={ {
-        setName,
-        setColumn,
-        setComparison,
-        setValue,
-        newData,
         data,
         filter,
+        setFilter,
+        newFilter,
       } }
     >
       {children}

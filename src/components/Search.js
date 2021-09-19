@@ -1,8 +1,55 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import StarwarsContext from '../context/StarWarsContext';
 
 function Search() {
-  const { setName, setColumn, setComparison, setValue } = useContext(StarwarsContext);
+  const { setFilter, filter } = useContext(StarwarsContext);
+  const [name, setName] = useState('');
+  const [column, setColumn] = useState('population');
+  const [comparison, setComparison] = useState('maior que');
+  const [value, setValue] = useState('');
+
+  /* function handleChange({ target }) {
+    setName(target.value);
+  } */
+
+  useEffect(() => {
+    const filterByText = {
+      filters: {
+        filterByName: {
+          name,
+        },
+        filterByNumericValues: [],
+      },
+    };
+    setFilter({ ...filterByText });
+  }, [name]);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const filterByNumericValues = [
+      {
+        column,
+        comparison,
+        value,
+      }];
+
+    let currentValue = filter.filters.filterByNumericValues;
+    currentValue = [...currentValue, ...filterByNumericValues];
+    filter.filters = { ...filter.filters, filterByNumericValues: currentValue };
+    setFilter({ ...filter });
+  }
+
+  /* function handleSubmit(event) {
+    event.preventDefault();
+    const filterByNumericValues = [
+      {
+        column,
+        comparison,
+        value,
+      }];
+
+    getFilter(filterByNumericValues);
+  } */
 
   function renderFilterByName() {
     return (
@@ -21,12 +68,13 @@ function Search() {
   return (
     <div>
       { renderFilterByName() }
-      <form>
+      <form onSubmit={ handleSubmit }>
         <label htmlFor="column">
           <select
             data-testid="column-filter"
             name="column"
             id="column"
+            required
             onChange={ ({ target }) => setColumn(target.value) }
           >
             <option value="population">population</option>
@@ -41,6 +89,7 @@ function Search() {
             data-testid="comparison-filter"
             name="comparison"
             id="comparison"
+            required
             onChange={ ({ target }) => setComparison(target.value) }
           >
             <option value="maior que">maior que</option>
@@ -54,10 +103,11 @@ function Search() {
             name="value"
             id="value"
             type="number"
+            required
             onChange={ ({ target }) => setValue(target.value) }
           />
         </label>
-        <button type="button" data-testid="button-filter">Filtrar</button>
+        <button type="submit" data-testid="button-filter">Filtrar</button>
       </form>
     </div>
   );
