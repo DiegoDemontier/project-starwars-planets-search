@@ -1,28 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import StarwarsContext from '../context/StarWarsContext';
 
 function Search() {
-  const { setFilter, filter } = useContext(StarwarsContext);
-  const [name, setName] = useState('');
+  const { setFilter, filter, setCouter } = useContext(StarwarsContext);
   const [column, setColumn] = useState('population');
   const [comparison, setComparison] = useState('maior que');
   const [value, setValue] = useState('');
+  // REFERENC useRef "https://medium.com/@guigaoliveira_/conhecendo-o-useref-do-react-9d67e66"
+  const getColumn = useRef(null);
 
-  /* function handleChange({ target }) {
-    setName(target.value);
-  } */
-
-  useEffect(() => {
-    const filterByText = {
-      filters: {
-        filterByName: {
-          name,
-        },
-        filterByNumericValues: [],
-      },
-    };
-    setFilter({ ...filterByText });
-  }, [name]);
+  function handleChange({ target }) {
+    const { filterByName } = filter.filters;
+    filterByName.name = target.value;
+    setFilter({ ...filter });
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -33,9 +24,16 @@ function Search() {
         value,
       }];
 
+    for (let index = 0; index < getColumn.current.length; index += 1) {
+      if (getColumn.current[index].value === column) {
+        getColumn.current[index].remove();
+      }
+    }
+
     let currentValue = filter.filters.filterByNumericValues;
     currentValue = [...currentValue, ...filterByNumericValues];
     filter.filters = { ...filter.filters, filterByNumericValues: currentValue };
+    setCouter((prevState) => prevState + 1);
     setFilter({ ...filter });
   }
 
@@ -59,7 +57,7 @@ function Search() {
           name="name"
           id="name"
           type="text"
-          onChange={ ({ target }) => setName(target.value) }
+          onChange={ handleChange }
         />
       </label>
     );
@@ -75,6 +73,7 @@ function Search() {
             name="column"
             id="column"
             required
+            ref={ getColumn }
             onChange={ ({ target }) => setColumn(target.value) }
           >
             <option value="population">population</option>

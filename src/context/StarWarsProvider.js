@@ -6,6 +6,7 @@ import fetchApi from '../services/api';
 
 export default function StarwarsProvider({ children }) {
   const [data, setData] = useState([]);
+  const [counter, setCouter] = useState(0);
   const [filter, setFilter] = useState({
     filters: {
       filterByName: {
@@ -20,19 +21,26 @@ export default function StarwarsProvider({ children }) {
     let values = [];
 
     if (filter.filters.filterByNumericValues.length > 0) {
-      values = Object.values(filter.filters.filterByNumericValues[0]);
+      values = Object.values(filter.filters.filterByNumericValues[counter - 1]);
     }
 
     if (values[1] === 'maior que') {
-      newData = data.filter((element) => element[values[0]] > Number(values[2]));
+      newData = data.filter((element) => element[values[0]] > Number(values[2]))
+        .filter((element) => element.name.toLowerCase()
+          .includes(filter.filters.filterByName.name.toLowerCase()));
     } else if (values[1] === 'menor que') {
-      newData = data.filter((element) => element[values[0]] < Number(values[2]));
+      newData = data.filter((element) => element[values[0]] < Number(values[2]))
+        .filter((element) => element.name.toLowerCase()
+          .includes(filter.filters.filterByName.name.toLowerCase()));
     } else if (values[1] === 'igual a') {
-      newData = data.filter((element) => element[values[0]] === Number(values[2]));
+      newData = data.filter((element) => element[values[0]] === values[2])
+        .filter((element) => element.name.toLowerCase()
+          .includes(filter.filters.filterByName.name.toLowerCase()));
     } else {
       newData = data.filter((element) => element.name.toLowerCase()
         .includes(filter.filters.filterByName.name.toLowerCase()));
     }
+
     return newData;
   }
 
@@ -56,6 +64,7 @@ export default function StarwarsProvider({ children }) {
         filter,
         setFilter,
         newFilter,
+        setCouter,
       } }
     >
       {children}
@@ -63,6 +72,6 @@ export default function StarwarsProvider({ children }) {
   );
 }
 
-StarwarsProvider.propsTypes = {
-  children: PropTypes.arrayOf(PropTypes.object).isRequired,
+StarwarsProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
