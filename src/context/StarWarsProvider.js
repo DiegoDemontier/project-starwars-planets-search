@@ -5,6 +5,7 @@ import StarWarsContext from './StarWarsContext';
 import fetchApi from '../services/api';
 
 export default function StarwarsProvider({ children }) {
+  const NUMBER = -1;
   const [data, setData] = useState([]);
   const [counter, setCouter] = useState(0);
   const [columns, setColumns] = useState([]);
@@ -15,8 +16,43 @@ export default function StarwarsProvider({ children }) {
         name: '',
       },
       filterByNumericValues: [],
+      order: {
+        column: 'name',
+        sort: 'ASC',
+      },
     },
   });
+
+  const { column, sort } = filter.filters.order;
+  // REFERENCE https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+  if (sort === 'ASC') {
+    if (column === 'name'
+    || column === 'terrain'
+    || column === 'films'
+    || column === 'url') {
+      data.sort((a, b) => {
+        if (a[column] > b[column]) return 1;
+        if (a[column] < b[column]) return NUMBER;
+        return 0;
+      });
+    } else {
+      data.sort((a, b) => Number(a[column]) - Number(b[column]));
+    }
+  } else if (sort === 'DESC') {
+    if (column === 'name'
+    || column === 'terrain'
+    || column === 'films'
+    || column === 'url') {
+      data.sort((a, b) => {
+        if (a[column] < b[column]) return 1;
+        if (a[column] > b[column]) return NUMBER;
+        return 0;
+      });
+    } else {
+      data.sort((a, b) => Number(b[column]) - Number(a[column]));
+    }
+  }
+
   function newFilter() {
     let newData = [];
     let values = [];
@@ -41,9 +77,11 @@ export default function StarwarsProvider({ children }) {
       newData = data.filter((element) => element.name.toLowerCase()
         .includes(filter.filters.filterByName.name.toLowerCase()));
     }
-
     return newData;
   }
+
+  let arrayData = data.reduce((__, acc) => acc, []);
+  arrayData = Object.keys(arrayData).filter((key) => key !== 'residents');
 
   async function setPlanets() {
     try {
@@ -66,7 +104,7 @@ export default function StarwarsProvider({ children }) {
   return (
     <StarWarsContext.Provider
       value={ {
-        data,
+        arrayData,
         filter,
         setFilter,
         newFilter,
