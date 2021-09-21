@@ -1,13 +1,20 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useState } from 'react';
+import FiltersRemoved from './FiltersRemoved';
 import StarwarsContext from '../context/StarWarsContext';
 
 function Search() {
-  const { setFilter, filter, setCouter } = useContext(StarwarsContext);
+  const {
+    setFilter,
+    filter,
+    setCouter,
+    setNewColumns,
+    columns,
+    newColumns,
+  } = useContext(StarwarsContext);
+
   const [column, setColumn] = useState('population');
   const [comparison, setComparison] = useState('maior que');
   const [value, setValue] = useState('');
-  // REFERENC useRef "https://medium.com/@guigaoliveira_/conhecendo-o-useref-do-react-9d67e66"
-  const getColumn = useRef(null);
 
   function handleChange({ target }) {
     const { filterByName } = filter.filters;
@@ -23,12 +30,10 @@ function Search() {
         comparison,
         value,
       }];
+    const index = columns.findIndex((e) => e === column);
+    columns.splice(index, 1);
 
-    for (let index = 0; index < getColumn.current.length; index += 1) {
-      if (getColumn.current[index].value === column) {
-        getColumn.current[index].remove();
-      }
-    }
+    setNewColumns([...newColumns, column]);
 
     let currentValue = filter.filters.filterByNumericValues;
     currentValue = [...currentValue, ...filterByNumericValues];
@@ -36,18 +41,6 @@ function Search() {
     setCouter((prevState) => prevState + 1);
     setFilter({ ...filter });
   }
-
-  /* function handleSubmit(event) {
-    event.preventDefault();
-    const filterByNumericValues = [
-      {
-        column,
-        comparison,
-        value,
-      }];
-
-    getFilter(filterByNumericValues);
-  } */
 
   function renderFilterByName() {
     return (
@@ -73,14 +66,11 @@ function Search() {
             name="column"
             id="column"
             required
-            ref={ getColumn }
             onChange={ ({ target }) => setColumn(target.value) }
           >
-            <option value="population">population</option>
-            <option value="orbital_period">orbital_period</option>
-            <option value="diameter">diameter</option>
-            <option value="rotation_period">rotation_period</option>
-            <option value="surface_water">surface_water</option>
+            {columns.map((element, index) => (
+              <option key={ index } value={ element }>{ element }</option>
+            ))}
           </select>
         </label>
         <label htmlFor="comparison">
@@ -108,6 +98,7 @@ function Search() {
         </label>
         <button type="submit" data-testid="button-filter">Filtrar</button>
       </form>
+      <FiltersRemoved />
     </div>
   );
 }

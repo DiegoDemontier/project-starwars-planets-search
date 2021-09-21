@@ -7,6 +7,8 @@ import fetchApi from '../services/api';
 export default function StarwarsProvider({ children }) {
   const [data, setData] = useState([]);
   const [counter, setCouter] = useState(0);
+  const [columns, setColumns] = useState([]);
+  const [newColumns, setNewColumns] = useState([]);
   const [filter, setFilter] = useState({
     filters: {
       filterByName: {
@@ -15,7 +17,6 @@ export default function StarwarsProvider({ children }) {
       filterByNumericValues: [],
     },
   });
-
   function newFilter() {
     let newData = [];
     let values = [];
@@ -57,6 +58,11 @@ export default function StarwarsProvider({ children }) {
     setPlanets();
   }, []);
 
+  useEffect(() => {
+    setColumns(['population',
+      'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
+  }, []);
+
   return (
     <StarWarsContext.Provider
       value={ {
@@ -65,6 +71,11 @@ export default function StarwarsProvider({ children }) {
         setFilter,
         newFilter,
         setCouter,
+        counter,
+        columns,
+        setColumns,
+        newColumns,
+        setNewColumns,
       } }
     >
       {children}
