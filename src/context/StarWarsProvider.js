@@ -5,7 +5,6 @@ import StarWarsContext from './StarWarsContext';
 import fetchApi from '../services/api';
 
 export default function StarwarsProvider({ children }) {
-  const NUMBER = -1;
   const [data, setData] = useState([]);
   const [counter, setCouter] = useState(0);
   const [columns, setColumns] = useState([]);
@@ -23,61 +22,25 @@ export default function StarwarsProvider({ children }) {
     },
   });
 
+  const columnText = ['name', 'terrain', 'films', 'url'];
   const { column, sort } = filter.filters.order;
   // REFERENCE https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
   if (sort === 'ASC') {
-    if (column === 'name'
-    || column === 'terrain'
-    || column === 'films'
-    || column === 'url') {
-      data.sort((a, b) => {
-        if (a[column] > b[column]) return 1;
-        if (a[column] < b[column]) return NUMBER;
-        return 0;
-      });
+    if (columnText.includes(column)) {
+      data.sort((a, b) => (
+        +(a[column] > b[column]) || +(a[column] === b[column]) - 1
+      ));
     } else {
       data.sort((a, b) => Number(a[column]) - Number(b[column]));
     }
   } else if (sort === 'DESC') {
-    if (column === 'name'
-    || column === 'terrain'
-    || column === 'films'
-    || column === 'url') {
-      data.sort((a, b) => {
-        if (a[column] < b[column]) return 1;
-        if (a[column] > b[column]) return NUMBER;
-        return 0;
-      });
+    if (columnText.includes(column)) {
+      data.sort((a, b) => (
+        +(a[column] < b[column]) || +(a[column] === b[column]) - 1
+      ));
     } else {
       data.sort((a, b) => Number(b[column]) - Number(a[column]));
     }
-  }
-
-  function newFilter() {
-    let newData = [];
-    let values = [];
-
-    if (filter.filters.filterByNumericValues.length > 0) {
-      values = Object.values(filter.filters.filterByNumericValues[counter - 1]);
-    }
-
-    if (values[1] === 'maior que') {
-      newData = data.filter((element) => element[values[0]] > Number(values[2]))
-        .filter((element) => element.name.toLowerCase()
-          .includes(filter.filters.filterByName.name.toLowerCase()));
-    } else if (values[1] === 'menor que') {
-      newData = data.filter((element) => element[values[0]] < Number(values[2]))
-        .filter((element) => element.name.toLowerCase()
-          .includes(filter.filters.filterByName.name.toLowerCase()));
-    } else if (values[1] === 'igual a') {
-      newData = data.filter((element) => element[values[0]] === values[2])
-        .filter((element) => element.name.toLowerCase()
-          .includes(filter.filters.filterByName.name.toLowerCase()));
-    } else {
-      newData = data.filter((element) => element.name.toLowerCase()
-        .includes(filter.filters.filterByName.name.toLowerCase()));
-    }
-    return newData;
   }
 
   let arrayData = data.reduce((__, acc) => acc, []);
@@ -107,7 +70,7 @@ export default function StarwarsProvider({ children }) {
         arrayData,
         filter,
         setFilter,
-        newFilter,
+        data,
         setCouter,
         counter,
         columns,

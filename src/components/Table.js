@@ -2,7 +2,34 @@ import React, { useContext } from 'react';
 import StarWarsContext from '../context/StarWarsContext';
 
 function Table() {
-  const { arrayData, newFilter } = useContext(StarWarsContext);
+  const { arrayData, filter, data, counter } = useContext(StarWarsContext);
+
+  function newFilter() {
+    let newData = [];
+    let values = [];
+
+    if (filter.filters.filterByNumericValues.length > 0) {
+      values = Object.values(filter.filters.filterByNumericValues[counter - 1]);
+    }
+
+    if (values[1] === 'maior que') {
+      newData = data.filter((element) => element[values[0]] > Number(values[2]))
+        .filter((element) => element.name.toLowerCase()
+          .includes(filter.filters.filterByName.name.toLowerCase()));
+    } else if (values[1] === 'menor que') {
+      newData = data.filter((element) => element[values[0]] < Number(values[2]))
+        .filter((element) => element.name.toLowerCase()
+          .includes(filter.filters.filterByName.name.toLowerCase()));
+    } else if (values[1] === 'igual a') {
+      newData = data.filter((element) => element[values[0]] === values[2])
+        .filter((element) => element.name.toLowerCase()
+          .includes(filter.filters.filterByName.name.toLowerCase()));
+    } else {
+      newData = data.filter((element) => element.name.toLowerCase()
+        .includes(filter.filters.filterByName.name.toLowerCase()));
+    }
+    return newData;
+  }
 
   return (
     <table>
