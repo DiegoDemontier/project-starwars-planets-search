@@ -8,8 +8,12 @@ function App() {
   return (
     <StarwarsProvider>
       <div>
-        <Search />
-        <Table />
+        <div className="conteiner">
+          <Search />
+        </div>
+        <div>
+          <Table />
+        </div>
       </div>
     </StarwarsProvider>
   );

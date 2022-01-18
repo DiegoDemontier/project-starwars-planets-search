@@ -1,5 +1,23 @@
+body {
+  display: flex;
+  justify-content: center;
+}
+
 table, th, td {
   border: 1px solid black;
   max-width: 9vw;
   overflow-wrap: break-word;
+}
+
+.conteiner {
+  display: flex;
+  justify-content: center;
+}
+
+.conteiner-search {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }

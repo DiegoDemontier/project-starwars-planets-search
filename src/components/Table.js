@@ -11,7 +11,6 @@ function Table() {
     if (filter.filters.filterByNumericValues.length > 0) {
       values = Object.values(filter.filters.filterByNumericValues[counter - 1]);
     }
-
     if (values[1] === 'maior que') {
       newData = data.filter((element) => element[values[0]] > Number(values[2]))
         .filter((element) => element.name.toLowerCase()

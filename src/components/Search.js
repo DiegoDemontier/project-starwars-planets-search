@@ -110,7 +110,7 @@ function Search() {
   }
 
   return (
-    <div>
+    <div className="conteiner-search">
       { renderFilterByName() }
       { renderSortColumn() }
       <form onSubmit={ handleSubmit }>

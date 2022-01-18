@@ -7,7 +7,8 @@ import fetchApi from '../services/api';
 export default function StarwarsProvider({ children }) {
   const [data, setData] = useState([]);
   const [counter, setCouter] = useState(0);
-  const [columns, setColumns] = useState([]);
+  const [columns, setColumns] = useState(['population',
+    'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
   const [newColumns, setNewColumns] = useState([]);
   const [filter, setFilter] = useState({
     filters: {
@@ -43,7 +44,7 @@ export default function StarwarsProvider({ children }) {
     }
   }
 
-  let arrayData = data.reduce((__, acc) => acc, []);
+  let arrayData = data[0] || [];
   arrayData = Object.keys(arrayData).filter((key) => key !== 'residents');
 
   async function setPlanets() {
@@ -59,23 +60,23 @@ export default function StarwarsProvider({ children }) {
     setPlanets();
   }, []);
 
-  useEffect(() => {
+  /* useEffect(() => {
     setColumns(['population',
       'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
-  }, []);
+  }, []); */
 
   return (
     <StarWarsContext.Provider
       value={ {
-        arrayData,
-        filter,
-        setFilter,
         data,
-        setCouter,
-        counter,
+        filter,
         columns,
-        setColumns,
+        counter,
+        arrayData,
         newColumns,
+        setFilter,
+        setCouter,
+        setColumns,
         setNewColumns,
       } }
     >
